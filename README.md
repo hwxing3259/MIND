@@ -16,18 +16,18 @@ torch==2.2.2
 openTSNE==1.0.2
 ```
 
-The `mult_o_int` package is tested on Mac OS and Ubuntu 16.04 systems.
+The `xxxx` package is tested on Mac OS and Ubuntu 16.04 systems.
 
 ### Installation Guide
-The `GPerturb` can be installed using
+The `xxxx` can be installed using
 ```
-pip install git+https://github.com/hwxing3259/GPerturb.git
-from GPerturb import *
+pip install git+https://github.com/hwxing3259/multi_o_int.git
+from xxxx import *
 ```
 
-Alternatively, one could directly download the [python file](https://github.com/hwxing3259/GPerturb/blob/main/GPerturb/GPerturb_model.py) to the current working directory and call
+Alternatively, one could directly download the [python file xxxxx](xxxxxx) to the current working directory and call
 ```
-from GPerturb_model import *
+from xxxxx import *
 ```
 
 ### Demonstration
