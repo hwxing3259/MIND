@@ -3,8 +3,6 @@ This repository hosts the implementation of our proposed multiomics integration 
 
 <p align="center"><img src="https://github.com/hwxing3259/multi_o_int/blob/main/examples/multiomics_integration_schematic.png" alt="mult_o_int" width="900px" /></p>
 
-
-
 ## System requirements
 ### Sofrware dependency and OS
 The package is developed under `Python>=3.80`, and requires the following packages
@@ -31,74 +29,57 @@ from xxxxx import *
 ```
 
 ### Demonstration
-Here we use the SciPlex2 dataset from [Lotfollahi et al 2023](https://github.com/theislab/CPA) as an example to demonstrate the Gaussian GPerturb pipeline
+Here we use the Breast invasive carcinoma (BRCA) dataset from The Cancer Genome Atlas (TCGA) ([Weinstein et al., 2013](https://www.nature.com/articles/ng.2764.pdf)) as an example to demonstrate the proposed method. Preprocessed data can be found [here](https://figshare.com/articles/dataset/Multi_O_Int/30032023).
 ### Load relavent datasets
 ```
-adata = sc.read('SciPlex2_new.h5ad')
-
-torch.manual_seed(3141592)
-# load data:
-my_conditioner = pd.read_csv("SciPlex2_perturbation.csv", index_col=0)
-my_conditioner = my_conditioner.drop('Vehicle', axis=1)  # TODO: or retaining it
-cond_name = list(my_conditioner.columns)
-my_conditioner = torch.tensor(my_conditioner.to_numpy() * 1.0, dtype=torch.float)
-my_conditioner = torch.pow(my_conditioner, 0.2)  # a power transformation of dosages
-
-my_observation = pd.read_csv("SciPlex2.csv", index_col=0)
-print(my_observation.shape)
-my_observation = torch.tensor(my_observation.to_numpy() * 1.0, dtype=torch.float)
-
-gene_name = list(pd.read_csv('SciPlex2_gene_name.csv').to_numpy()[:, 0])
-
-my_cell_info = pd.read_csv("SciPlex2_cell_info.csv", index_col=0)
-my_cell_info.n_genes = my_cell_info.n_genes/my_cell_info.n_counts
-my_cell_info.n_counts = np.log(my_cell_info.n_counts)
-cell_info_names = list(my_cell_info.columns)
-my_cell_info = torch.tensor(my_cell_info.to_numpy() * 1.0, dtype=torch.float)
+np.random.seed(31415)
+torch.manual_seed(31415)
+cancer_type='BRCA'
+clinic_data = pd.read_csv('./TCGA_preprocessed/{}/clinic_data.csv'.format(cancer_type), header=0, index_col=0)
+RNA_data = pd.read_csv('./TCGA_preprocessed/{}/RNA_data.csv'.format(cancer_type), header=0, index_col=0)
+methyl_data = pd.read_csv('./TCGA_preprocessed/{}/meth_data.csv'.format(cancer_type), header=0, index_col=0)
+rppa_data = pd.read_csv('./TCGA_preprocessed/{}/rppa_data_imp.csv'.format(cancer_type), header=0, index_col=0)
+cna_data = pd.read_csv('./TCGA_preprocessed/{}/cna_data.csv'.format(cancer_type), header=0, index_col=0)
+miRNA_data = pd.read_csv('./TCGA_preprocessed/{}/miRNA_data_imp.csv'.format(cancer_type), header=0, index_col=0)
 ```
 
-### Define and train Gaussian-GPerturb
+### Specify and train the model
 ```
-output_dim = my_observation.shape[1]
-sample_size = my_observation.shape[0]
-hidden_node = 700  
-hidden_layer = 4
-conditioner_dim = my_conditioner.shape[1]
-cell_info_dim = my_cell_info.shape[1]
+# specify hyperparameters
+emb_dim = 64
+lr = 1e-4
+epoch = 5000
+N = clinic_data.shape[0]
 
-lr_parametric = 1e-3  
-tau = torch.tensor(1.).to(device)
+data_dict = {'RNA': RNA_data, 'methyl': methyl_data, 'CNA': cna_data, 'miRNA': miRNA_data, 'RPPA': rppa_data}
 
-parametric_model = GPerturb_Gaussian(conditioner_dim=conditioner_dim, output_dim=output_dim, base_dim=cell_info_dim,
-                               data_size=sample_size, hidden_node=hidden_node, hidden_layer_1=hidden_layer,
-                               hidden_layer_2=hidden_layer, tau=tau)
-parametric_model.test_id = testing_idx = list(np.random.choice(a=range(my_observation.shape[0]), size=my_observation.shape[0] // 8, replace=False))
-parametric_model = parametric_model.to(device)
-
-#  train the model from scratch 
-parametric_model.GPerturb_train(epoch=250, observation=my_observation, cell_info=my_cell_info, perturbation=my_conditioner, 
-                                lr=lr_parametric, device=device)
+test = MyLocalModel(data_dict=data_dict, device='cpu', emb_dim=emb_dim)
+test.my_train(epoch, lr=lr)
 ```
 
-### Get fitted values on test set
+### Get embeddings
 ```
-fitted_vals = Gaussian_estimates(model=parametric_model, obs=my_observation[parametric_model.test_id], 
-                                 cond=my_conditioner[parametric_model.test_id], cell_info=my_cell_info[parametric_model.test_id])
+with torch.no_grad():
+    z_emb = test.get_embedding()[0].cpu().numpy()
+```
+
+### Get reconstrcuted data
+```
+with torch.no_grad():
+    reconstructed_data = test.predict()  
 ```
 
 ### Estimated running time
-The codes above takes roughly 1.5 hours to run on our desktop computer with 16GB RAM, a AMD Ryzen 7 5700X processor and a Nvidia RTX2060 GPU. 
+The codes above takes roughly 8 mins to run on a MacBook Pro laptop.
 
 ## Instruction for use
-User needs to provide three data matrices: A $N\times G$ gene expression matrix $\mathbf{X}$ where $N,G$ are the numer of cells and number of genes respectively, a $N \times K$ cell level informaiton matrix $\mathbf{C}$ where $K$ is number of cell-level features, and a $N\times D$ perturbation matrix $\mathbf{P}$ where $D$ is the dimension of the perturbation vectors. Given $\mathbf{X}, \mathbf{C}, \mathbf{P}$, and suppose $\mathbf{P}$ consists of $D'$ unique perturbation vectors. GPerturb will return (1) a $N \times G$ matrix $\hat{\mathbf{X}}$, the estimated gene expression matrix, and (2) a $D' \times G$ sparse matrix where the non-zero entries are the estimated perturbation effect of a specific perturbation on a specific gene. 
+User needs ot provide a dictionary of multiomics data. Denote $N$ the total number of patients in the multiomics dataset. Each modality $\mathbf{X}_m$ is a $N\times D_m$ matrix where $D_m$ is the feature diemnsion of the $m$th modality indexed by patient id. For each modality $m$, patients not present in $\mathbf{X}_m$ is represented by a row of $\texttt{NaN}$. 
+
+The model will return a matrix of pateint-specific embeddings of size $N \times D_{emb}$, there $D_{emb}$ is the user-supplied embedding size. For each modality, the trained model also returns $\hat{\mathbf{X}}_m$ containing reconstructions and predictions of both observed and missing data in $\mathbf{X}_m$ . 
 
 ## Reproducing numerical examples in the paper
-Codes for reproducing the LUHMES example: [Link](https://github.com/hwxing3259/GPerturb/blob/main/numerical_examples/LUHMES_GPerturb.ipynb)
+Codes for reproducing the synthetic example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/synthetic_example.ipynb)
 
-Codes for reproducing the TCells example: [Link](https://github.com/hwxing3259/GPerturb/blob/main/numerical_examples/TCells_GPerturb.ipynb)
+Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/TCGA_example.ipynb)
 
-Codes for reproducing the SciPlex2 example: [Link](https://github.com/hwxing3259/GPerturb/blob/main/numerical_examples/SciPlex2_GPerturb.ipynb)
-
-Codes for reproducing the Replogle et al 2022 example: [Link](https://github.com/hwxing3259/GPerturb/blob/main/numerical_examples/Replogle_GPerturb.ipynb)
-
-Pre-trained models and datasets can be downloaded from: [Link](https://drive.google.com/drive/folders/1OqzcBbEL3HHOjoSQTynwRHhx2w8WVIrU?usp=share_link)
+Pre-processed datasets can be downloaded from: [Link](https://figshare.com/articles/dataset/Multi_O_Int/30032023)
