@@ -13,9 +13,10 @@ matplotlib>=3.70
 numpy==1.26.4
 pandas>=2.0.0
 torch==2.2.2
+openTSNE==1.0.2
 ```
 
-The `GPerturb` package is tested on Windows, Mac OS and Ubuntu 16.04 systems.
+The `mult_o_int` package is tested on Mac OS and Ubuntu 16.04 systems.
 
 ### Installation Guide
 The `GPerturb` can be installed using
