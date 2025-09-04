@@ -17,7 +17,7 @@ openTSNE>=1.0.2
 The `MIND` package is tested on Mac OS and Ubuntu 16.04 systems.
 
 ### Installation Guide
-The `MIND` can be installed using
+`MIND` can be installed using
 ```
 pip install git+https://github.com/hwxing3259/MIND.git
 from MIND import MIND
