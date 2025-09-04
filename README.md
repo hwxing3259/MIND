@@ -82,6 +82,6 @@ Codes for reproducing the synthetic example: [Link](https://github.com/hwxing325
 
 Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/TCGA_example.ipynb)
 
-Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/CCMA_example.ipynb)
+Codes for reproducing the CCMA example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/CCMA_example.ipynb)
 
 Pre-processed datasets can be downloaded from: [Link](https://figshare.com/articles/dataset/Multi_O_Int/30032023)
