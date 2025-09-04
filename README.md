@@ -1,4 +1,4 @@
-# Multiomics data integration via neighbourohood-aware multimodal VAE
+# MIND: Multimodal Integration with Neighbourhood-aware Distributions
 This repository hosts the implementation of our proposed multiomics integration model.
 
 <p align="center"><img src="https://github.com/hwxing3259/multi_o_int/blob/main/examples/multiomics_integration_schematic.png" alt="mult_o_int" width="900px" /></p>
@@ -14,18 +14,18 @@ torch>=2.2.2
 openTSNE>=1.0.2
 ```
 
-The `NA_MVAE` package is tested on Mac OS and Ubuntu 16.04 systems.
+The `MIND` package is tested on Mac OS and Ubuntu 16.04 systems.
 
 ### Installation Guide
-The `NA_MVAE` can be installed using
+The `MIND` can be installed using
 ```
 pip install git+https://github.com/hwxing3259/multi_o_int.git
-from NA_MVAE import NA_MVAE
+from MIND import MIND
 ```
 
-Alternatively, one could directly download the python file [NA_MVAE_model.py](https://github.com/hwxing3259/multi_o_int/blob/main/NA_MVAE/NA_MVAE_model.py) to the current working directory and call
+Alternatively, one could directly download the python file [MIND_model.py](https://github.com/hwxing3259/multi_o_int/blob/main/MIND/MIND_model.py) to the current working directory and call
 ```
-from NA_MVAE_model import NA_MVAE
+from MIND_model import MIND
 ```
 
 ### Demonstration
@@ -53,7 +53,7 @@ N = clinic_data.shape[0]
 
 data_dict = {'RNA': RNA_data, 'methyl': methyl_data, 'CNA': cna_data, 'miRNA': miRNA_data, 'RPPA': rppa_data}
 
-test = NA_MVAE(data_dict=data_dict, device='cpu', emb_dim=emb_dim)
+test = MIND(data_dict=data_dict, device='cpu', emb_dim=emb_dim)
 test.my_train(epoch, lr=lr)
 ```
 
