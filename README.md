@@ -8,10 +8,10 @@ This repository hosts the implementation of our proposed multiomics integration 
 The package is developed under `Python>=3.80`, and requires the following packages
 ```
 matplotlib>=3.70
-numpy==1.26.4
+numpy>=1.26.4
 pandas>=2.0.0
-torch==2.2.2
-openTSNE==1.0.2
+torch>=2.2.2
+openTSNE>=1.0.2
 ```
 
 The `NA_MVAE` package is tested on Mac OS and Ubuntu 16.04 systems.
