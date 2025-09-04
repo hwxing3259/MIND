@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 VERSION = '0.0.1'
-DESCRIPTION = 'NA_MVAE'
-LONG_DESCRIPTION = 'Python implementation of NA_MVAE'
+DESCRIPTION = 'MIND'
+LONG_DESCRIPTION = 'Python implementation of MIND model'
 
 # Setting up
 setup(
     # the name must match the folder name 'verysimplemodule'
-    name="mult_o_int",
+    name="MIND",
     version=VERSION,
     author="Hanwen Xing",
     author_email="<hanwen.xing@wrh.ox.ac.uk>",
