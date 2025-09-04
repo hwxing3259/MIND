@@ -70,7 +70,7 @@ with torch.no_grad():
 ```
 
 ### Estimated running time
-The codes above takes roughly 8 mins to run on a MacBook Pro laptop.
+The codes above takes roughly 8 mins to run on a MacBook.
 
 ## Instruction for use
 User needs ot provide a dictionary of multiomics data. Denote $N$ the total number of patients in the multiomics dataset. Each modality $\mathbf{X}_m$ is a $N\times D_m$ matrix where $D_m$ is the feature diemnsion of the $m$th modality indexed by patient id. For each modality $m$, patients not present in $\mathbf{X}_m$ is represented by a row of $\texttt{NaN}$. 
