@@ -1,4 +1,4 @@
-# Multiomics data integration via neighbourohood preservation
+# Multiomics data integration via neighbourohood-aware multimodal VAE
 This repository hosts the implementation of our proposed multiomics integration model.
 
 <p align="center"><img src="https://github.com/hwxing3259/multi_o_int/blob/main/examples/multiomics_integration_schematic.png" alt="mult_o_int" width="900px" /></p>
