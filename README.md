@@ -14,18 +14,18 @@ torch==2.2.2
 openTSNE==1.0.2
 ```
 
-The `xxxx` package is tested on Mac OS and Ubuntu 16.04 systems.
+The `NA_MVAE` package is tested on Mac OS and Ubuntu 16.04 systems.
 
 ### Installation Guide
-The `xxxx` can be installed using
+The `NA_MVAE` can be installed using
 ```
 pip install git+https://github.com/hwxing3259/multi_o_int.git
-from xxxx import *
+from NA_MVAE import NA_MVAE
 ```
 
-Alternatively, one could directly download the [python file xxxxx](xxxxxx) to the current working directory and call
+Alternatively, one could directly download the python file [NA_MVAE_model.py](https://github.com/hwxing3259/multi_o_int/blob/main/NA_MVAE/NA_MVAE_model.py) to the current working directory and call
 ```
-from xxxxx import *
+from NA_MVAE_model import NA_MVAE
 ```
 
 ### Demonstration
@@ -53,7 +53,7 @@ N = clinic_data.shape[0]
 
 data_dict = {'RNA': RNA_data, 'methyl': methyl_data, 'CNA': cna_data, 'miRNA': miRNA_data, 'RPPA': rppa_data}
 
-test = MyLocalModel(data_dict=data_dict, device='cpu', emb_dim=emb_dim)
+test = NA_MVAE(data_dict=data_dict, device='cpu', emb_dim=emb_dim)
 test.my_train(epoch, lr=lr)
 ```
 
