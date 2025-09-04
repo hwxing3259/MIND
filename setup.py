@@ -18,7 +18,7 @@ setup(
                       'numpy==1.26.4',
                       'matplotlib==3.8.0',
                       'torch==2.2.2',
-                      'openTSNE'==1.0.2],  # add any additional packages that
+                      'openTSNE==1.0.2'],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
 
     keywords=['python', 'first package'],
