@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 VERSION = '0.0.1'
-DESCRIPTION = 'mult_o_int'
-LONG_DESCRIPTION = 'Python implementation of mult_o_int'
+DESCRIPTION = 'NA_MVAE'
+LONG_DESCRIPTION = 'Python implementation of NA_MVAE'
 
 # Setting up
 setup(
