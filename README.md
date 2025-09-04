@@ -19,7 +19,7 @@ The `MIND` package is tested on Mac OS and Ubuntu 16.04 systems.
 ### Installation Guide
 The `MIND` can be installed using
 ```
-pip install git+https://github.com/hwxing3259/multi_o_int.git
+pip install git+https://github.com/hwxing3259/MIND.git
 from MIND import MIND
 ```
 
