@@ -75,7 +75,7 @@ The code above takes roughly 15 mins to run on a MacBook.
 ## Instruction for use
 User needs ot provide a dictionary of multiomics data. Denote $N$ the total number of patients in the multiomics dataset. Each modality $\mathbf{X}_m$ is a $N\times D_m$ matrix where $D_m$ is the feature diemnsion of the $m$-th modality. For each modality $m$, patients not present in $\mathbf{X}_m$ is represented by a row of $\texttt{NaN}$. 
 
-The model will return a matrix of pateint-specific embeddings of size $N \times D_{emb}$, there $D_{emb}$ is the user-supplied embedding size. For each modality, the trained model also returns $\hat{\mathbf{X}}_m$ containing reconstructions and predictions of both observed and missing data of $\mathbf{X}_m$ . 
+The model will return a matrix of pateint-specific embeddings of size $N \times D_{emb}$, there $D_{emb}$ is the user-supplied embedding size. For each modality $m$, the trained model also returns $\hat{\mathbf{X}}_m$ containing reconstructions and predictions of both observed and missing data of $\mathbf{X}_m$ . 
 
 ## Reproducing numerical examples in the paper
 Codes for reproducing the synthetic example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/synthetic_example.ipynb)
