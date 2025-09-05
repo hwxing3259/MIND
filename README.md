@@ -5,7 +5,7 @@ This repository hosts the implementation of our proposed multiomics integration 
 
 ## System requirements
 ### Sofrware dependency and OS
-The package is developed under `Python>=3.80`, and requires the following packages
+The package is developed under `Python>=3.90`, and requires the following packages
 ```
 matplotlib>=3.70
 numpy>=1.26.4
