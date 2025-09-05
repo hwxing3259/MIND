@@ -84,4 +84,4 @@ Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/mul
 
 Codes for reproducing the CCMA example: [Link](https://github.com/hwxing3259/multi_o_int/blob/main/examples/CCMA_example.ipynb)
 
-Pre-processed datasets can be downloaded from: [Link](https://figshare.com/articles/dataset/Multi_O_Int/30032023)
+Pre-processed datasets and pre-computed outputs can be downloaded from: [Link](https://figshare.com/articles/dataset/Multi_O_Int/30032023)
