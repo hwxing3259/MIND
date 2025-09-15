@@ -80,7 +80,7 @@ The model will return a matrix of pateint-specific embeddings of size $N \times 
 ## Reproducing numerical examples in the paper
 Codes for reproducing the synthetic example: [Link](https://github.com/hwxing3259/MIND/blob/main/examples/synthetic_example.ipynb)
 
-Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/MIND/blob/main/examples/TCGA_example.ipynb)
+Codes for reproducing the TCGA example: [Link](https://github.com/hwxing3259/MIND/blob/main/examples/TCGA_int_example.ipynb)
 
 Codes for reproducing the CCMA example: [Link](https://github.com/hwxing3259/MIND/blob/main/examples/CCMA_example.ipynb)
 
