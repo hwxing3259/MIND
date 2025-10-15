@@ -7,11 +7,11 @@ This repository hosts the implementation of [MIND](https://www.biorxiv.org/conte
 ### Sofrware dependency and OS
 The package is developed under `Python>=3.12.0`, and requires the following packages
 ```
-matplotlib>=3.70
-numpy>=1.26.4
-pandas>=2.0.0
-torch>=2.2.2
-openTSNE>=1.0.2
+matplotlib~=3.70
+numpy~=1.26.4
+pandas~=2.0.0
+torch~=2.2.2
+openTSNE~=1.0.2
 ```
 
 The `MIND` package is tested on Mac OS and Ubuntu 16.04 systems.
