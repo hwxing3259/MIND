@@ -5,7 +5,7 @@ This repository hosts the implementation of [MIND](https://www.biorxiv.org/conte
 
 ## System requirements
 ### Sofrware dependency and OS
-The package is developed under `Python>=3.12.0`, and requires the following packages
+The package is developed under `Python~=3.12.0`, and requires the following packages
 ```
 matplotlib~=3.70
 numpy~=1.26.4
