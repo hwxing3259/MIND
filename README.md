@@ -12,6 +12,8 @@ numpy~=1.26.4
 pandas~=2.0.0
 torch~=2.2.2
 openTSNE~=1.0.2
+requests~=2.32.5
+zipfile~=3.13
 ```
 
 The `MIND` package is tested on Mac OS and Ubuntu 16.04 systems.
