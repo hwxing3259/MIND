@@ -1,5 +1,5 @@
 # MIND: Multimodal Integration with Neighbourhood-aware Distributions
-This repository hosts the implementation of our proposed multiomics integration model.
+This repository hosts the implementation of [MIND](https://www.biorxiv.org/content/10.1101/2025.09.15.676314v1.full.pdf), a VAE based multiomics integration model.
 
 <p align="center"><img src="https://github.com/hwxing3259/multi_o_int/blob/main/examples/multiomics_integration_schematic.png" alt="mult_o_int" width="900px" /></p>
 
