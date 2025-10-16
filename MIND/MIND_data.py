@@ -201,5 +201,11 @@ def load_CCLE(task: str = 'all', download_dir: str = './MIND_downloaded_data/'):
     return ans
 
 
+def download_all(download_dir: str):
+    get_synthetic(download_dir)
+    get_TCGA(download_dir)
+    get_CCLE(download_dir)
+    get_CCMA(download_dir)
+
 
 
