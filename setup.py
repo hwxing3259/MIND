@@ -19,8 +19,7 @@ setup(
                       'matplotlib~=3.8.0',
                       'torch~=2.2.2',
                       'openTSNE~=1.0.2',
-                      'requests~=2.32.5',
-                      'zipfile~=3.13'],  # add any additional packages that
+                      'requests~=2.32.5'],  # add any additional packages that
     # needs to be installed along with your package. Eg: 'caer'
 
     keywords=['python', 'first package'],
