@@ -29,13 +29,14 @@ class MLP(nn.Module):  # spike-and-slab GP, D*L+1 parameters
         return e
 
 class MIND(nn.Module):
-    def __init__(self, data_dict, emb_dim=128, device='cpu', alpha=5e-2, mode='batch'):
+    def __init__(self, data_dict, emb_dim=128, device='cpu', alpha=5e-2, perp=30, beta=1.):
         """
         integrating multiomics data by finding consensus of neighbourhood structures of different modalities
         :param data_dict: dictionary of multiomics data, each having the same size = total number of patients, missing values = NANs
         :param emb_dim: dimension of embedding
         :param device: cuda?
         :param alpha: regularisation strength
+        :param beta: tsne-tilting factor strength
         """
         super(MIND, self).__init__()
 
@@ -50,7 +51,8 @@ class MIND(nn.Module):
         self.presence = presence
         self.emb_dim = emb_dim
         self.alpha = alpha
-        self.mode = mode
+        self.beta = beta
+        self.perp = perp
 
         self.data_similarities = []
 
@@ -72,8 +74,6 @@ class MIND(nn.Module):
         self.register_buffer('prior_mean', torch.zeros(self.emb_dim))
         self.register_buffer('prior_std', torch.ones(self.emb_dim))
 
-        self.register_buffer('Z_store', torch.randn((self.N, self.emb_dim)))
-
     def mc_kl_term(self, emb, post_mean, post_log_std, idx_list):
         '''
 
@@ -93,39 +93,27 @@ class MIND(nn.Module):
         affinities.fill_diagonal_(0.0)
 
         loss_kl_2 = 0.
-        if self.mode == 'batch':
-            for m in range(len(self.data_list)):
-                available_id = self.presence[m][idx_list]
-                overlap_m = idx_list[available_id]  # subset of data id in idx_list that has presence[m] True
-                if len(idx_list) != self.N:
-                    P = torch.tensor(affinity.PerplexityBasedNN(self.data_list[m][overlap_m].cpu().numpy(), perplexity=30,
-                                                                      metric="euclidean").P.todense(), dtype=torch.float32, device=self.device)
-                else:
-                    sub_data_similarity = self.data_similarities[m][overlap_m][:, overlap_m]
-                    P = sub_data_similarity / sub_data_similarity.sum()
-
-                sub_affinity = affinities[available_id][:, available_id]
-                Q = sub_affinity / (sub_affinity.sum() + 1e-8)
-        elif self.mode == 'gibbs':
-            available_id = self.presence[m]
-            overlap_m = torch.arange(self.N, device=self.device)[available_id]  # subset of data id that has presence[m] True
+        for m in range(len(self.data_list)):
+            available_id = self.presence[m][idx_list]
+            overlap_m = idx_list[available_id]  # subset of data id in idx_list that has presence[m] True
+            if len(idx_list) != self.N:
+                P = torch.tensor(affinity.PerplexityBasedNN(self.data_list[m][overlap_m].cpu().numpy(), perplexity=30,
+                                                                  metric="euclidean").P.todense(), dtype=torch.float32, device=self.device)
+            else:
+                sub_data_similarity = self.data_similarities[m][overlap_m][:, overlap_m]
+                P = sub_data_similarity / sub_data_similarity.sum()
 
             sub_affinity = affinities[available_id][:, available_id]
             Q = sub_affinity / (sub_affinity.sum() + 1e-8)
 
-            sub_data_similarity = self.data_similarities[m][overlap_m][:, overlap_m]
-            P = sub_data_similarity / sub_data_similarity.sum()
-        else:
-            raise ValueError('mode needs to be batch or gibbs')
-
-        loss_kl_2 += -1. * (P * torch.log(Q + 1e-8)).sum()
+            loss_kl_2 += -1. * self.beta * (P * torch.log(Q + 1e-8)).sum()
 
         return loss_kl_1 / (len(idx_list) * self.emb_dim) + loss_kl_2
 
     def get_embedding(self, idx_list=None):
         if idx_list is None:
-            emb_store = torch.zeros((len(self.data_list), self.N, 2 * self.emb_dim))
-            appearance = torch.zeros(self.N)
+            emb_store = torch.zeros((len(self.data_list), self.N, 2 * self.emb_dim), device=self.device)
+            appearance = torch.zeros(self.N, device=self.device)
             for m in range(len(self.data_list)):
                 idx_list = torch.tensor(range(self.N), device=self.device)
                 available_id = self.presence[m][idx_list]
@@ -136,8 +124,8 @@ class MIND(nn.Module):
             return merged_z[:, :self.emb_dim], merged_z[:, self.emb_dim:]
 
         else:
-            emb_store = torch.zeros((len(self.data_list), len(idx_list), 2 * self.emb_dim))
-            appearance = torch.zeros(len(idx_list))
+            emb_store = torch.zeros((len(self.data_list), len(idx_list), 2 * self.emb_dim), device=self.device)
+            appearance = torch.zeros(len(idx_list), device=self.device)
             for m in range(len(self.data_list)):
                 available_id = self.presence[m][idx_list]
                 appearance[available_id] += 1.
@@ -159,8 +147,8 @@ class MIND(nn.Module):
     def loss(self, idx_list):
         # it is the batched version!
         # get pairwise distance of the embeddings
-        emb_store = torch.zeros((len(self.data_list), len(idx_list), 2 * self.emb_dim))
-        appearance = torch.zeros(len(idx_list))
+        emb_store = torch.zeros((len(self.data_list), len(idx_list), 2 * self.emb_dim), device=self.device)
+        appearance = torch.zeros(len(idx_list), device=self.device)
         for m in range(len(self.data_list)):
             available_id = self.presence[m][idx_list]
             appearance[available_id] += 1.
@@ -180,16 +168,7 @@ class MIND(nn.Module):
 
         sample_z = mean_z + torch.randn_like(log_std_z) * log_std_z.exp()
 
-        if self.mode == 'batch':
-            loss_kl = self.mc_kl_term(sample_z, mean_z, log_std_z, idx_list)
-        elif self.mode == 'gibbs':
-            new_Z_sample = self.Z_store * 1.0
-            new_Z_sample[idx_list] = 0.
-            new_Z_sample[idx_list] += sample_z
-
-            loss_kl = self.mc_kl_term(new_Z_sample, mean_z, log_std_z, idx_list)
-        else:
-            raise ValueError('mode needs to be batch or gibbs')
+        loss_kl = self.mc_kl_term(sample_z, mean_z, log_std_z, idx_list)
 
         loss_recon = 0.
         for m in range(len(self.data_list)):
@@ -205,12 +184,16 @@ class MIND(nn.Module):
     def my_train(self, n_epoch=2000, lr=1e-3, batch_size=None):
         if batch_size is None:
             batch_size = self.N
+            if isinstance(self.perp, int):
+                self.perp = [self.perp] * len(self.input_dim_list)
+            if len(self.perp) != len(self.input_dim_list):
+                raise ValueError('check perplexity, should be int or match # of modality')
             for i in range(len(self.data_list)):
                 nan_idx = ~self.data_list[i][:, 0].isnan()
                 indices = nan_idx.nonzero(as_tuple=True)[0]
-                temp = torch.zeros((self.data_list[i].shape[0], self.data_list[i].shape[0]))
-                sim = torch.tensor(affinity.PerplexityBasedNN(self.data_list[i][nan_idx], perplexity=30,
-                                                              metric="euclidean").P.todense(), dtype=torch.float32)
+                temp = torch.zeros((self.data_list[i].shape[0], self.data_list[i].shape[0]), device=self.device)
+                sim = torch.tensor(affinity.PerplexityBasedNN(self.data_list[i][nan_idx].cpu().numpy(), perplexity=self.perp[i],
+                                                              metric="euclidean").P.todense(), dtype=torch.float32, device=self.device)
                 temp[indices[:, None], indices] += sim
                 self.data_similarities += [temp * 1.0]
 
@@ -230,4 +213,3 @@ class MIND(nn.Module):
             if ep % 1000 == 0:
                 print('Epoch={}'.format(ep))
 
-# update get_knn_index in OpenTSNE, use sub matrices of precomputed distance matrix to accelerate computation, avoid repetition
