@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "MIND: Multimodal Integration with Neighbourhood-aware Distributions"
+version: 0.1.0
+date-released: "2026-05-04"
+license: MIT
+repository-code: "https://github.com/hwxing3259/MIND"
+authors:
+  - family-names: Xing
+    given-names: Hanwen
+    email: hanwen.xing@wrh.ox.ac.uk
+    affiliation: "Nuffield Department for Women's and Reproductive Health, University of Oxford"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Xing
+      given-names: Hanwen
+    - family-names: Yau
+      given-names: Christopher
+  title: "Multimodal Integration with Neighbourhood-aware Distributions"
+  year: 2025
+  journal: bioRxiv
+  doi: 10.1101/2025.09.15.676314
+  url: "https://www.biorxiv.org/content/10.1101/2025.09.15.676314v1.full.pdf"

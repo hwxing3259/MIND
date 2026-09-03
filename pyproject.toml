@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MIND"
+version = "0.1.0"
+description = "Multimodal Integration with Neighbourhood-aware Distributions"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Hanwen Xing", email = "hanwen.xing@wrh.ox.ac.uk" },
+]
+maintainers = [
+    { name = "Hanwen Xing", email = "hanwen.xing@wrh.ox.ac.uk" },
+]
+keywords = ["multi-omics", "vae", "deep learning", "bioinformatics", "integration"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "pandas~=2.2",
+    "numpy~=1.26",
+    "matplotlib~=3.8",
+    "torch~=2.2",
+    "openTSNE~=1.0",
+    "requests~=2.32",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest~=8.0",
+    "pytest-cov~=5.0",
+    "ruff~=0.5",
+    "black~=24.0",
+]
+docs = [
+    "sphinx~=7.0",
+    "sphinx-rtd-theme~=2.0",
+    "myst-parser~=3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/hwxing3259/MIND"
+Documentation = "https://github.com/hwxing3259/MIND#readme"
+"Bug Tracker" = "https://github.com/hwxing3259/MIND/issues"
+"Source Code" = "https://github.com/hwxing3259/MIND"
+Paper = "https://www.biorxiv.org/content/10.1101/2025.09.15.676314v1.full.pdf"
+
+[tool.setuptools.packages.find]
+include = ["MIND*"]
+exclude = ["tests*", "docs*", "examples*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # line-length handled by formatter
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
